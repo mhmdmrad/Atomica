@@ -1,6 +1,6 @@
 # Atomica
 
-**Atomica** is a real-time C++ OpenGL simulation and visualization project for atoms, bonds, and molecules, featuring FXAA post-processing and an interactive 3D camera. It’s designed as a sandbox for learning modern OpenGL rendering techniques, physics engines, and GPU-based effects.
+**Atomica** is a real-time C++ OpenGL simulation and visualization project for atoms, bonds, and molecules, featuring an interactive 3D camera. It’s designed as a sandbox for learning modern OpenGL rendering techniques, physics engines, and GPU-based effects.
 
 ## ✨ Features
 
