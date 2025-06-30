@@ -6,7 +6,6 @@
 
 - Physically-based atom & bond simulation
 - Real-time 3D rendering using OpenGL
-- FXAA (Fast Approximate Anti-Aliasing) screen-space pass
 - Offscreen framebuffer rendering (FBO)
 - Phong lighting and shading for spheres (atoms)
 - Line rendering for bonds
