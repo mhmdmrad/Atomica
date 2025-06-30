@@ -141,12 +141,28 @@ void Renderer::render(
     glViewport(0, 0, m_windowWidth, m_windowHeight);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    for (auto& atom : atoms)
-        renderAtom(atom);
+    // Debug object lifetimes
+    std::cout << "Num Atoms: " << atoms.size()
+              << " Num Molecules: " << molecules.size() << std::endl;
 
-    for (auto& mol : molecules)
-        for (auto& bond : mol->getBonds())
+    for (auto& atom : atoms) {
+        std::cout << "Atom Z: " << atom->getAtomicNumber()
+                  << " Pos: " << atom->getPosition().x << ", "
+                  << atom->getPosition().y << ", "
+                  << atom->getPosition().z << std::endl;
+        renderAtom(atom);
+    }
+
+    for (auto& mol : molecules) {
+        for (auto& bond : mol->getBonds()) {
+            auto A = bond->getAtom1();
+            auto B = bond->getAtom2();
+            std::cout << "Bond between: "
+                      << A->getAtomicNumber() << " and "
+                      << B->getAtomicNumber() << std::endl;
             renderBond(bond);
+        }
+    }
 
     renderEnergyLabels(deltaTime);
 }
