@@ -61,15 +61,6 @@ private:
     GLuint m_lineVAO = 0,
            m_lineVBO = 0;
 
-    // Offscreen FBO + attachments for FXAA
-    GLuint m_sceneFBO      = 0;
-    GLuint m_sceneColorTex = 0;
-    GLuint m_sceneDepthRBO = 0;
-
-    // Screen‐quad
-    GLuint m_quadVAO = 0,
-           m_quadVBO = 0;
-
     std::vector<EnergyLabel> m_energyLabels;
     int m_windowWidth  = 800;
     int m_windowHeight = 600;
