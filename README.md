@@ -4,6 +4,8 @@
 
 WIP (Work In Progress)
 
+---
+
 **Atomica** is a real-time C++ OpenGL simulation and visualization project for atoms, bonds, and molecules, featuring an interactive 3D camera. It’s designed as a sandbox for learning modern OpenGL rendering techniques, physics engines, and GPU-based effects.
 
 ## ✨ Features
