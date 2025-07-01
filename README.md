@@ -18,7 +18,7 @@ WIP (Work In Progress)
 - Phong lighting and shading for spheres (atoms)
 - Line rendering for bonds
 - Configurable camera controls
-- ImGui integration (optional) for tweaking parameters
+- ImGui integration for tweaking parameters
 
 ## 🧩 Tech Stack
 
