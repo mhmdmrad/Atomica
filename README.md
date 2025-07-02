@@ -1,10 +1,13 @@
 # Atomica
-
 ---
 
 WIP (Work In Progress)
 
-**Atomica** is a real-time C++ OpenGL simulation and visualization project for atoms, bonds, and molecules, featuring an interactive 3D camera. It’s designed as a sandbox for learning modern OpenGL rendering techniques, physics engines, and GPU-based effects.
+---
+
+**Atomica** is a real-time C++ OpenGL simulation and visualization project for atoms, bonds, and molecules, featuring an interactive 3D camera. It’s designed as a saadbox for learning modern OpenGL rendering techniques, physics engines, and GPU-based effects, as well as making an interactive physics and chemistry experience.
+
+---
 
 ## ✨ Features
 
@@ -14,7 +17,7 @@ WIP (Work In Progress)
 - Phong lighting and shading for spheres (atoms)
 - Line rendering for bonds
 - Configurable camera controls
-- ImGui integration (optional) for tweaking parameters
+- ImGui integration for tweaking parameters
 
 ## 🧩 Tech Stack
 
