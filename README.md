@@ -6,6 +6,11 @@ New features coming soon...
 
 ---
 
+## Important Note
+This project is inspired by kavan010's Gravity_Sim project, and part of my code is his code, so please, credit kavan010 for the idea, like I am doing and will do!
+
+---
+
 **Atomica** is a real-time C++ OpenGL simulation and visualization project for atoms, bonds, and molecules, featuring an interactive 3D camera. It’s designed as a sandbox for learning modern OpenGL rendering techniques, physics engines, and GPU-based effects, and it offers an interactive physics and chemistry experience.
 
 ---
