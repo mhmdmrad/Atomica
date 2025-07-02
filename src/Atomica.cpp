@@ -179,7 +179,17 @@ void SandboxSimulation::update(float deltaTime) {
 }
 
 void SandboxSimulation::render(float deltaTime) {
-    m_renderer->render(m_physicsEngine->getAtoms(), m_physicsEngine->getMolecules(), deltaTime);
+    m_imguiManager->newFrame();
+
+    m_renderer->render(
+      m_physicsEngine->getAtoms(),
+      m_physicsEngine->getMolecules(),
+      deltaTime
+    );
+
+    m_imguiManager->render(*m_physicsEngine);
+
+    m_imguiManager->endFrame();
 }
 
 void SandboxSimulation::handleInput() {
