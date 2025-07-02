@@ -1,7 +1,7 @@
 # Atomica
 ---
 
-WIP (Work In Progress)
+New features coming soon...
 
 ---
 
