@@ -7,7 +7,7 @@ New features coming soon...
 ---
 
 ## Important Note
-
+The libs are already in the repo, but just don't forget to link them with my provided CMakeLists.txt! 
 
 ---
 
