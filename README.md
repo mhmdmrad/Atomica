@@ -22,7 +22,7 @@ New features coming soon...
 
 ## 🧩 Tech Stack
 
-- **Language**: C++17
+- **Language**: C++ 17
 - **Renderer**: OpenGL 3.3 Core
 - **Libraries**: 
   - GLFW for window & input
