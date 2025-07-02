@@ -1,7 +1,7 @@
 # Atomica
 ---
 
-New features coming soon...
+
 
 ---
 
