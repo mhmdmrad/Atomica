@@ -7,7 +7,7 @@ New features coming soon...
 ---
 
 ## Important Note
-This project is inspired by kavan010's Gravity_Sim project, and part of my code is his code, so please, credit kavan010 for the idea, like I am doing and will do!
+
 
 ---
 
