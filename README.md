@@ -35,7 +35,7 @@ New features coming soon...
 
 ### Prerequisites
 
-- C++ compiler with C++17 support
+- C++ compiler with C++ 17 support
 - CMake 3.15+
 - OpenGL drivers
 - GLEW and GLFW binaries/libraries
