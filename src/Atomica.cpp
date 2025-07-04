@@ -60,6 +60,11 @@ private:
     static void mouseCallback(GLFWwindow* window, double xpos, double ypos);
     static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
     static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	
+    float   m_lastPhotonWavelength = 0.0f;
+    Band    m_lastPhotonBand       = Band::VISIBLE;
+    glm::vec3 m_lastPhotonOrigin;       // e.g. atom position
+    bool    m_justJumped            = false;
 };
 
 SandboxSimulation::SandboxSimulation() {}
@@ -119,7 +124,7 @@ bool SandboxSimulation::initializeWindow() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    m_window = glfwCreateWindow(m_windowWidth, m_windowHeight, "Sandbox Simulation", nullptr, nullptr);
+    m_window = glfwCreateWindow(m_windowWidth, m_windowHeight, "Atomica™", nullptr, nullptr);
     if (!m_window) {
         glfwTerminate();
         return false;
@@ -172,6 +177,50 @@ void SandboxSimulation::demonstrateH2OMolecule() {
 
     m_renderer->addEnergyLabel(glm::vec3(0.5f, 0.25f, 0.0f), bond1->getEnergy(), 5.0f);
     m_renderer->addEnergyLabel(glm::vec3(-0.5f, 0.25f, 0.0f), bond2->getEnergy(), 5.0f);
+}
+
+void SandboxSimulation::demonstrateElectronJump() {
+    LOG_INFO("Demonstrating electron orbital transition");
+
+    // pick first atom with at least one electron
+    const auto& atoms = m_physicsEngine->getAtoms();
+    if (atoms.empty()) {
+        LOG_WARN("No atoms for electron jump");
+        return;
+    }
+
+    auto atom = atoms.front();
+    auto& electrons = atom->getElectrons();
+    if (electrons.empty()) {
+        LOG_WARN("Atom Z=" + std::to_string(atom->getAtomicNumber()) +
+                 " has no electrons");
+        return;
+    }
+
+    // current and target levels (could come from UI instead)
+    int currentLevel = electrons[0]->getOrbitalLevel();
+    int targetLevel  = currentLevel == 1 ? 2 : 1;  // simple toggle
+
+    OrbitalModel orbitalModel;
+    float deltaE = orbitalModel.simulateElectronJump(
+        electrons[0], atom, targetLevel
+    );  // ΔE positive=absorb, negative=emit
+
+    // compute photon display only on emission
+    if (deltaE < 0.0f) {
+        float energyEv    = -deltaE;               // make positive
+        float wavelength  = 1240.0f / energyEv;    // nm
+        Renderer::Band b;
+        if      (wavelength < 380.0f)        b = Renderer::Band::ULTRAVIOLET;
+        else if (wavelength > 750.0f)        b = Renderer::Band::INFRARED;
+        else                                  b = Renderer::Band::VISIBLE;
+
+        // origin slightly above atom
+        glm::vec3 origin = atom->getPosition() + glm::vec3(0.0f, 1.0f, 0.0f);
+
+        // tell renderer to draw wave
+        m_renderer->triggerPhotonDisplay(wavelength, b, origin);
+    }
 }
 
 void SandboxSimulation::update(float deltaTime) {
