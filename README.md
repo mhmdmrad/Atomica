@@ -6,6 +6,11 @@ New features coming soon...
 
 ---
 
+## Important Note
+The libs are already in the repo, but just don't forget to link them with my provided CMakeLists.txt! 
+
+---
+
 **Atomica** is a real-time C++ OpenGL simulation and visualization project for atoms, bonds, and molecules, featuring an interactive 3D camera. It’s designed as a sandbox for learning modern OpenGL rendering techniques, physics engines, and GPU-based effects, and it offers an interactive physics and chemistry experience.
 
 ---
@@ -22,7 +27,7 @@ New features coming soon...
 
 ## 🧩 Tech Stack
 
-- **Language**: C++17
+- **Language**: C++ 17
 - **Renderer**: OpenGL 3.3 Core
 - **Libraries**: 
   - GLFW for window & input
@@ -35,7 +40,7 @@ New features coming soon...
 
 ### Prerequisites
 
-- C++ compiler with C++17 support
+- C++ compiler with C++ 17 support
 - CMake 3.15+
 - OpenGL drivers
 - GLEW and GLFW binaries/libraries
