@@ -43,6 +43,19 @@ private:
     static constexpr float RYDBERG_CONSTANT_EV = 13.605693f;
 };
 
+/// Convert photon energy ΔE (eV) to wavelength in nanometers:
+static inline float energyToWavelengthNm(float deltaE_eV) {
+    // E (eV) = 1240 nm·eV / λ (nm) → λ = 1240 / |ΔE|
+    return deltaE_eV != 0.0f
+      ? 1240.0f / std::abs(deltaE_eV)
+      : INFINITY;
+}
+
+/// Classify the band (nm):
+enum class Band { ULTRAVIOLET, VISIBLE, INFRARED };
+static inline Band classifyBand(float wavelengthNm) {
+    if (wavelengthNm < 380.0f)       return Band::ULTRAVIOLET;
+    else if (wavelengthNm <= 750.0f) return Band::VISIBLE;
+    else                               return Band::INFRARED;
+
 #endif // ORBITAL_MODEL_H
-
-
