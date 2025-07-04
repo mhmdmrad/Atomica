@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include <iostream>
 #include <cmath>
+#include <vector>
 #include <algorithm>
 #include <glm/gtc/constants.hpp>
 
@@ -239,49 +240,90 @@ void Renderer::generateSphere(float radius, int sectorCount, int stackCount) {
     }
 }
 
-void Renderer::renderAtom(std::shared_ptr<Atom> atom) {
-    m_shaderManager.useShader("sphere");
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), atom->getPosition());
-    float r = getAtomRadius(atom->getAtomicNumber());
-    model = glm::scale(model, glm::vec3(r));
-
-    m_shaderManager.setUniformMat4("model", model);
-    m_shaderManager.setUniformMat4("view", m_camera.getViewMatrix());
-    m_shaderManager.setUniformMat4("projection", m_camera.getProjectionMatrix());
-    m_shaderManager.setUniformVec3("objectColor", getAtomColor(atom->getAtomicNumber()));
-    m_shaderManager.setUniformVec3("lightPos", glm::vec3(5, 5, 5));
-    m_shaderManager.setUniformVec3("viewPos", m_camera.getPosition());
-
-    glBindVertexArray(m_sphereVAO);
-    glDrawElements(GL_TRIANGLES, (GLsizei)m_sphereIndices.size(), GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
-}
-
+void Renderer::renderAtom(std::shared_ptr<Atom> atom) { /* … */ }
 void Renderer::renderBond(std::shared_ptr<Bond> bond) {
     m_shaderManager.useShader("line");
-    auto A = bond->getAtom1();
-    auto B = bond->getAtom2();
     float pts[6] = {
-        A->getPosition().x, A->getPosition().y, A->getPosition().z,
-        B->getPosition().x, B->getPosition().y, B->getPosition().z
+       bond->getAtom1()->getPosition().x, /*…*/ bond->getAtom2()->getPosition().z
     };
     glBindBuffer(GL_ARRAY_BUFFER, m_lineVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(pts), pts, GL_DYNAMIC_DRAW);
-    m_shaderManager.setUniformMat4("view", m_camera.getViewMatrix());
+    m_shaderManager.setUniformMat4("view",       m_camera.getViewMatrix());
     m_shaderManager.setUniformMat4("projection", m_camera.getProjectionMatrix());
-    m_shaderManager.setUniformVec3("lineColor", glm::vec3(0.8f, 0.8f, 0.8f));
+    m_shaderManager.setUniformVec3("lineColor",  glm::vec3(0.8f));
     glBindVertexArray(m_lineVAO);
-    glDrawArrays(GL_LINES, 0, 2);
+      glLineWidth(3.0f);
+      glDrawArrays(GL_LINES, 0, 2);
+      glLineWidth(1.0f);
     glBindVertexArray(0);
 }
 
 void Renderer::renderEnergyLabels(float deltaTime) {
-    for (auto it = m_energyLabels.begin(); it != m_energyLabels.end();) {
-        it->remainingTime -= deltaTime;
-        if (it->remainingTime <= 0.0f) {
-            it = m_energyLabels.erase(it);
-        } else {
-            ++it;
-        }
+    for (auto it = m_energyLabels.begin(); it!=m_energyLabels.end();) {
+        it->remainingTime -= dt;
+        if (it->remainingTime <= 0) it = m_energyLabels.erase(it);
+        else ++it;
     }
+}
+
+// ——— Photon code ———
+
+void Renderer::triggerPhotonDisplay(float wavelengthNm,
+                                    Band band,
+                                    const glm::vec3& origin)
+{
+    m_showPhoton       = true;
+    m_photonWavelength = wavelengthNm;
+    m_photonBand       = band;
+    m_photonOrigin     = origin;
+    m_photonFramesLeft = PHOTON_FADE_FRAMES;
+    m_photonAlpha      = 1.0f;
+}
+
+glm::vec3 Renderer::wavelengthToRGB(float λ) const {
+    if (λ < 380 || λ > 750) return {1,1,1};
+    float t;
+    if (λ < 440)   { t=(λ-380)/60;    return {1-t,0,1}; }
+    if (λ < 490)   { t=(λ-440)/50;    return {0,t,1}; }
+    if (λ < 510)   { t=(λ-490)/20;    return {0,1,1-t}; }
+    if (λ < 580)   { t=(λ-510)/70;    return {t,1,0}; }
+    if (λ < 645)   { t=(λ-580)/65;    return {1,1-t,0}; }
+    /* λ ≤750 */   { t=(λ-645)/105;   return {1,0,t}; }
+}
+
+void Renderer::displayPhoton() {
+    if (!m_showPhoton || m_photonFramesLeft<=0) return;
+
+    glm::vec3 col;
+    switch (m_photonBand) {
+      case Band::VISIBLE:     col = wavelengthToRGB(m_photonWavelength); break;
+      case Band::ULTRAVIOLET: col = {0.6f,0,0.8f}; break;
+      case Band::INFRARED:    col = {1.0f,0.3f,0}; break;
+    }
+    col *= m_photonAlpha;
+
+    const int N = 50; const float length=2.0f;
+    std::vector<glm::vec3> pts(N);
+    for(int i=0;i<N;++i){
+        float t = float(i)/(N-1);
+        float x = m_photonOrigin.x + t*length;
+        float y = 0.2f * std::sin(2.0f*glm::pi<float>()*t * (750.0f/m_photonWavelength));
+        pts[i] = { x, m_photonOrigin.y + y, m_photonOrigin.z };
+    }
+
+    m_shaderManager.useShader("line");
+    m_shaderManager.setUniformMat4("view",       m_camera.getViewMatrix());
+    m_shaderManager.setUniformMat4("projection", m_camera.getProjectionMatrix());
+    m_shaderManager.setUniformVec3("lineColor",  col);
+
+    glBindBuffer(GL_ARRAY_BUFFER, m_lineVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*pts.size(), pts.data(), GL_DYNAMIC_DRAW);
+    glBindVertexArray(m_lineVAO);
+      glDrawArrays(GL_LINE_STRIP, 0, (GLsizei)pts.size());
+    glBindVertexArray(0);
+
+    // fade
+    --m_photonFramesLeft;
+    m_photonAlpha = float(m_photonFramesLeft)/PHOTON_FADE_FRAMES;
+    if (m_photonFramesLeft<=0) m_showPhoton = false;
 }
